@@ -1,20 +1,13 @@
-{{config(materialized = 'table')}}
+{{ config(materialized="table") }}
 
 with
     customers as (
-        select
-            id as customer_id,
-            first_name,
-            last_name,
+        select id as customer_id, first_name, last_name,
         from `altschool-455914.jaffle_shop.customers`
     ),
 
     orders as (
-        select
-            id as order_id,
-            user_id as customer_id,
-            order_date,
-            status
+        select id as order_id, user_id as customer_id, order_date, status
         from `altschool-455914.jaffle_shop.orders`
     ),
 
@@ -38,12 +31,9 @@ with
     ),
 
     customer_payments as (
-        select
-            o.customer_id,
-            sum(p.amount) as total_amount,
+        select o.customer_id, sum(p.amount) as total_amount,
         from orders o
-        left join payments p
-        on o.order_id = p.order_id
+        left join payments p on o.order_id = p.order_id
         group by o.customer_id
     ),
 
@@ -57,12 +47,10 @@ with
             co.number_of_orders,
             cp.total_amount,
         from customers c
-        left join customer_orders co
-            on c.customer_id = co.customer_id
-        left join customer_payments cp
-            on c.customer_id = cp.customer_id
+        left join customer_orders co on c.customer_id = co.customer_id
+        left join customer_payments cp on c.customer_id = cp.customer_id
 
     )
 
-select * from final
-
+select *
+from final
